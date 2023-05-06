@@ -1,0 +1,8 @@
+.mat-toolbar{
+  padding: -24px;
+  width: auto;
+  margin-bottom: 20px;
+}
+mat-form-field{
+  padding: 5px;
+}
