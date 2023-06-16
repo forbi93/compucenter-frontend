@@ -1,27 +1,26 @@
-import {Component, OnInit} from '@angular/core';
-import {CustomerService} from "../../services/customer.service";
+import { Component } from '@angular/core';
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {SnackbarService} from "../../services/snackbar.service";
 import {Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {GlobalConstants} from "../../shared/global-constants";
-import {CategoryComponent} from "../dialog/category/category.component";
-import {CustomerComponent} from "../dialog/customer/customer.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
+import {TyperoomService} from "../../services/typeroom.service";
+import {TyperoomComponent} from "../dialog/typeroom/typeroom.component";
 
 @Component({
-  selector: 'app-manage-customer',
-  templateUrl: './manage-customer.component.html',
-  styleUrls: ['./manage-customer.component.css']
+  selector: 'app-manage-typeroom',
+  templateUrl: './manage-typeroom.component.html',
+  styleUrls: ['./manage-typeroom.component.css']
 })
-export class ManageCustomerComponent implements OnInit{
+export class ManageTyperoomComponent {
 
-  displayedColumns: string[] = ['name','lastName','contactNumber','dni','doc','edit'];
+  displayedColumns: string[] = ['name','edit'];
   dataSource:any;
   responseMessage:any;
 
-  constructor(private customerService:CustomerService,
+  constructor(private typeroomService:TyperoomService,
               private ngxService:NgxUiLoaderService,
               private dialog:MatDialog,
               private snackbarService:SnackbarService,
@@ -34,7 +33,7 @@ export class ManageCustomerComponent implements OnInit{
   }
 
   tableData(){
-    this.customerService.getCustomers().subscribe((response:any)=>{
+    this.typeroomService.getTypeRooms().subscribe((response:any)=>{
       this.ngxService.stop();
       this.dataSource = new MatTableDataSource(response);
     },(error:any)=>{
@@ -60,11 +59,11 @@ export class ManageCustomerComponent implements OnInit{
       action: 'Add'
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(TyperoomComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onAddTypeRoom.subscribe((response)=>{
       this.tableData();
     })
   }
@@ -76,30 +75,30 @@ export class ManageCustomerComponent implements OnInit{
       data:values
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(TyperoomComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onAddTypeRoom.subscribe((response)=>{
       this.tableData();
     })
   }
   handleDeleteAction(values:any){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message:'delete' + values.name+' customer',
+      message:'delete' + values.name+' product',
       confirmation:true
     }
     const dialogRef = this.dialog.open(ConfirmationComponent,dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response)=>{
       this.ngxService.start();
-      this.deleteCustomer(values.id);
+      this.deleteTypeRoom(values.id);
       dialogRef.close();
     })
   }
 
-  deleteCustomer(id:any){
-    this.customerService.delete(id).subscribe((response:any)=>{
+  deleteTypeRoom(id:any){
+    this.typeroomService.delete(id).subscribe((response:any)=>{
       this.ngxService.stop();
       this.tableData();
       this.responseMessage = response?.message;

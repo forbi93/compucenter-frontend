@@ -16,6 +16,14 @@ import { ManageCategoryComponent } from './manage-category/manage-category.compo
 import { CategoryComponent } from './dialog/category/category.component';
 import { CustomerComponent } from './dialog/customer/customer.component';
 import { ManageCustomerComponent } from './manage-customer/manage-customer.component';
+import { ManageTyperoomComponent } from './manage-typeroom/manage-typeroom.component';
+import { TyperoomComponent } from './dialog/typeroom/typeroom.component';
+import { ManageRoomComponent } from './manage-room/manage-room.component';
+import { RoomComponent } from './dialog/room/room.component';
+import { ManageReservationComponent } from './manage-reservation/manage-reservation.component';
+import { ViewReservationComponent } from './view-reservation/view-reservation.component';
+import { ViewReservationRoomsComponent } from './dialog/view-reservation-rooms/view-reservation-rooms.component';
+import { ManageUserComponent } from './manage-user/manage-user.component';
 
 @NgModule({
   imports: [
@@ -36,7 +44,15 @@ import { ManageCustomerComponent } from './manage-customer/manage-customer.compo
     ManageCategoryComponent,
     CategoryComponent,
     CustomerComponent,
-    ManageCustomerComponent
+    ManageCustomerComponent,
+    ManageTyperoomComponent,
+    TyperoomComponent,
+    ManageRoomComponent,
+    RoomComponent,
+    ManageReservationComponent,
+    ViewReservationComponent,
+    ViewReservationRoomsComponent,
+    ManageUserComponent
   ]
 })
 export class MaterialComponentsModule {}

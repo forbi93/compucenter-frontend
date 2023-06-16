@@ -1,20 +1,20 @@
-import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../../../services/snackbar.service";
-import {CustomerService} from "../../../services/customer.service";
 import {GlobalConstants} from "../../../shared/global-constants";
+import {TyperoomService} from "../../../services/typeroom.service";
 
 @Component({
-  selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css']
+  selector: 'app-typeroom',
+  templateUrl: './typeroom.component.html',
+  styleUrls: ['./typeroom.component.css']
 })
-export class CustomerComponent implements OnInit{
+export class TyperoomComponent {
 
-  onAddCustomer = new EventEmitter();
-  onEditCustomer = new EventEmitter();
-  customerForm: any = FormGroup;
+  onAddTypeRoom = new EventEmitter();
+  onEditTypeRoom = new EventEmitter();
+  typeroomForm: any = FormGroup;
   dialogAction: any = "Add";
   action: any = "Add";
 
@@ -22,23 +22,19 @@ export class CustomerComponent implements OnInit{
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,
               private formBuilder: FormBuilder,
-              private customerService: CustomerService,
-              public dialogRef: MatDialogRef<CustomerComponent>,
+              private typeroomService: TyperoomService,
+              public dialogRef: MatDialogRef<TyperoomComponent>,
               private snackbarService: SnackbarService) {
   }
 
   ngOnInit(): void {
-    this.customerForm = this.formBuilder.group({
+    this.typeroomForm = this.formBuilder.group({
       name:[null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      contactNumber: [null, [Validators.required]],
-      dni: [null, [Validators.required]],
-      doc: [null, [Validators.required]]
     });
     if (this.dialogData.action === "Edit") {
       this.dialogAction = "Edit"
       this.action = "Update"
-      this.customerForm.patchValue(this.dialogData.data);
+      this.typeroomForm.patchValue(this.dialogData.data);
     }
   }
 
@@ -51,18 +47,14 @@ export class CustomerComponent implements OnInit{
   }
 
   add() {
-    var formData = this.customerForm.value;
+    var formData = this.typeroomForm.value;
     var data = {
       name: formData.name,
-      lastName: formData.lastName,
-      contactNumber: formData.contactNumber,
-      dni: formData.dni,
-      doc: formData.doc
     }
 
-    this.customerService.add(data).subscribe((response: any) => {
+    this.typeroomService.add(data).subscribe((response: any) => {
       this.dialogRef.close();
-      this.onAddCustomer.emit();
+      this.onAddTypeRoom.emit();
       this.responseMessage = response.message;
       this.snackbarService.openSnackBar(this.responseMessage, "success");
     }, (error) => {
@@ -78,19 +70,15 @@ export class CustomerComponent implements OnInit{
   }
 
   edit() {
-    var formData = this.customerForm.value;
+    var formData = this.typeroomForm.value;
     var data = {
       id:this.dialogData.data.id,
       name: formData.name,
-      lastName: formData.lastName,
-      contactNumber: formData.contactNumber,
-      dni: formData.dni,
-      doc: formData.doc
     }
 
-    this.customerService.update(data).subscribe((response: any) => {
+    this.typeroomService.update(data).subscribe((response: any) => {
       this.dialogRef.close();
-      this.onAddCustomer.emit();
+      this.onAddTypeRoom.emit();
       this.responseMessage = response.message;
       this.snackbarService.openSnackBar(this.responseMessage, "success");
     }, (error) => {

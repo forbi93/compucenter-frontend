@@ -1,27 +1,28 @@
-import {Component, OnInit} from '@angular/core';
-import {CustomerService} from "../../services/customer.service";
+import { Component } from '@angular/core';
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {SnackbarService} from "../../services/snackbar.service";
 import {Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {GlobalConstants} from "../../shared/global-constants";
-import {CategoryComponent} from "../dialog/category/category.component";
-import {CustomerComponent} from "../dialog/customer/customer.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
+import {RoomService} from "../../services/room.service";
+import {RoomComponent} from "../dialog/room/room.component";
 
 @Component({
-  selector: 'app-manage-customer',
-  templateUrl: './manage-customer.component.html',
-  styleUrls: ['./manage-customer.component.css']
+  selector: 'app-manage-room',
+  templateUrl: './manage-room.component.html',
+  styleUrls: ['./manage-room.component.css']
 })
-export class ManageCustomerComponent implements OnInit{
+export class ManageRoomComponent {
 
-  displayedColumns: string[] = ['name','lastName','contactNumber','dni','doc','edit'];
+  displayedColumns: string[] = ['name','typeRoomName','description','beds','observations','price','edit'];
   dataSource:any;
+
+  length1:any;
   responseMessage:any;
 
-  constructor(private customerService:CustomerService,
+  constructor(private roomService:RoomService,
               private ngxService:NgxUiLoaderService,
               private dialog:MatDialog,
               private snackbarService:SnackbarService,
@@ -34,7 +35,7 @@ export class ManageCustomerComponent implements OnInit{
   }
 
   tableData(){
-    this.customerService.getCustomers().subscribe((response:any)=>{
+    this.roomService.getRooms().subscribe((response:any)=>{
       this.ngxService.stop();
       this.dataSource = new MatTableDataSource(response);
     },(error:any)=>{
@@ -60,11 +61,11 @@ export class ManageCustomerComponent implements OnInit{
       action: 'Add'
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(RoomComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onAddRoom.subscribe((response)=>{
       this.tableData();
     })
   }
@@ -76,30 +77,30 @@ export class ManageCustomerComponent implements OnInit{
       data:values
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(RoomComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onEditRoom.subscribe((response)=>{
       this.tableData();
     })
   }
   handleDeleteAction(values:any){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message:'delete' + values.name+' customer',
+      message:'delete' + values.name+' room',
       confirmation:true
     }
     const dialogRef = this.dialog.open(ConfirmationComponent,dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response)=>{
       this.ngxService.start();
-      this.deleteCustomer(values.id);
+      this.deleteRoom(values.id);
       dialogRef.close();
     })
   }
 
-  deleteCustomer(id:any){
-    this.customerService.delete(id).subscribe((response:any)=>{
+  deleteRoom(id:any){
+    this.roomService.delete(id).subscribe((response:any)=>{
       this.ngxService.stop();
       this.tableData();
       this.responseMessage = response?.message;
@@ -107,6 +108,29 @@ export class ManageCustomerComponent implements OnInit{
     },(error:any)=>{
       this.ngxService.stop();
       console.log(error);
+      if (error.error?.message){
+        this.responseMessage = error.error?.message;
+      }else{
+        this.responseMessage = GlobalConstants.genericError;
+      }
+      this.snackbarService.openSnackBar(this.responseMessage,GlobalConstants.error);
+    })
+  }
+
+  onChange(status:any,id:any){
+    this.ngxService.start();
+    var data = {
+      status: status.toString(),
+      id:id
+    }
+
+    this.roomService.updateStatus(data).subscribe((response:any)=>{
+      this.ngxService.stop();
+      this.responseMessage = response?.message;
+      this.snackbarService.openSnackBar(this.responseMessage,"success");
+    },(error:any)=>{
+      this.ngxService.stop();
+      console.log(error.error?.message);
       if (error.error?.message){
         this.responseMessage = error.error?.message;
       }else{

@@ -1,0 +1,93 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row fxLayout="row">
+    <span>{{dialogData.action}} Habitación</span>
+    <span class="spacer"></span>
+    <button class="class-dialog-close" mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="typeRoomForm">
+    <div fxFlex fxLayout="column">
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="typeRoomForm.controls.name.touched && typeRoomForm.controls.name.invalid">
+          <span *ngIf="typeRoomForm.controls.name.errors.required">This field is mandatory.</span>
+          <span *ngIf="typeRoomForm.controls.name.errors.pattern">This field is invalid.</span>
+
+        </mat-error>
+      </mat-form-field>
+      </div>
+
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Tipo de Habitación</mat-label>
+        <mat-select formControlName="typeRoomId">
+          <mat-option *ngFor="let typeRoom of typeRooms" [value]="typeRoom.id">
+            {{typeRoom.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      </div>
+
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="description" required>
+        <mat-error *ngIf="typeRoomForm.controls.description.touched && typeRoomForm.controls.description.invalid">
+          <span *ngIf="typeRoomForm.controls.name.description.required">This field is mandatory.</span>
+          <span *ngIf="typeRoomForm.controls.description.errors.pattern">This field is invalid.</span>
+
+        </mat-error>
+      </mat-form-field>
+      </div>
+
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Camas</mat-label>
+        <input matInput formControlName="beds" required>
+        <mat-error *ngIf="typeRoomForm.controls.beds.touched && typeRoomForm.controls.beds.invalid">
+          <span *ngIf="typeRoomForm.controls.beds.errors.required">This field is mandatory.</span>
+          <span *ngIf="typeRoomForm.controls.beds.errors.pattern">This field is invalid.</span>
+
+        </mat-error>
+      </mat-form-field>
+      </div>
+
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Observaciones</mat-label>
+        <input matInput formControlName="observations" required>
+        <mat-error *ngIf="typeRoomForm.controls.observations.touched && typeRoomForm.controls.observations.invalid">
+          <span *ngIf="typeRoomForm.controls.observations.errors.required">This field is mandatory.</span>
+          <span *ngIf="typeRoomForm.controls.observations.errors.pattern">This field is invalid.</span>
+
+        </mat-error>
+      </mat-form-field>
+      </div>
+
+      <div fxLayout="row wrap">
+      <mat-form-field appearance="fill" fxFlex>
+        <mat-label>Precio</mat-label>
+        <input matInput formControlName="price" required>
+        <mat-error *ngIf="typeRoomForm.controls.price.touched && typeRoomForm.controls.price.invalid">
+          <span *ngIf="typeRoomForm.controls.price.errors.required">This field is mandatory.</span>
+          <span *ngIf="typeRoomForm.controls.price.errors.pattern">This field is invalid.</span>
+
+        </mat-error>
+      </mat-form-field>
+      </div>
+
+
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" type="submit" (click)="handleSubmit()" [disabled]="!(typeRoomForm.valid && typeRoomForm.dirty)">
+    <mat-icon>save</mat-icon> {{action}}
+  </button>
+  <button mat-raised-button color="warn" mat-dialog-close=""><mat-icon>cancel</mat-icon> Close</button>
+</mat-dialog-actions>
