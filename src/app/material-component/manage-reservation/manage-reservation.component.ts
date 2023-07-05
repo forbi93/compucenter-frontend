@@ -73,18 +73,17 @@ export class ManageReservationComponent implements OnInit{
     this.ngxService.start();
     this.getTypeRooms();
     this.manageReservationForm = this.formBuilder.group({
-      name:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      email:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      contactNumber:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      paymentMethod:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      room:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      typeRoom:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      quantity:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      price:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      date:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
-      total:[null,[Validators.required,Validators.pattern(GlobalConstants.nameRegex)]],
+      name:[null,[Validators.required]],
+      email:[null,[Validators.required]],
+      contactNumber:[null,[Validators.required]],
+      paymentMethod:[null,[Validators.required]],
+      room:[null,[Validators.required]],
+      typeRoom:[null,[Validators.required]],
+      quantity:[null,[Validators.required]],
+      price:[null,[Validators.required]],
+      date:[null,[Validators.required]],
+      total:[null,[Validators.required]],
     })
-    const dateValue = this.manageReservationForm.get('date').value;
 
   }
 

@@ -33,6 +33,8 @@ export class ViewReservationComponent implements OnInit{
     this.tableData();
   }
 
+
+
   tableData(){
     this.reservationService.getReservations().subscribe((response:any)=>{
       this.ngxService.stop();
