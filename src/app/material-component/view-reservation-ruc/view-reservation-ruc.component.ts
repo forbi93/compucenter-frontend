@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component } from '@angular/core';
 import {ReservationService} from "../../services/reservation.service";
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -9,15 +9,18 @@ import {GlobalConstants} from "../../shared/global-constants";
 import {ViewReservationRoomsComponent} from "../dialog/view-reservation-rooms/view-reservation-rooms.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
 import {saveAs} from "file-saver";
+import {
+  ViewReservationRucRoomsComponent
+} from "../dialog/view-reservation-ruc-rooms/view-reservation-ruc-rooms.component";
 
 @Component({
-  selector: 'app-view-reservation',
-  templateUrl: './view-reservation.component.html',
-  styleUrls: ['./view-reservation.component.css']
+  selector: 'app-view-reservation-ruc',
+  templateUrl: './view-reservation-ruc.component.html',
+  styleUrls: ['./view-reservation-ruc.component.css']
 })
-export class ViewReservationComponent implements OnInit{
+export class ViewReservationRucComponent {
 
-  displayedColumns: string[] = ['name','email','contactNumber','dateCreated','paymentMethod','total','view'];
+  displayedColumns: string[] = ['razSocial','ruc','dateCreated','address','paymentMethod','total','view'];
   dataSource: any;
   responseMessage:any;
 
@@ -36,7 +39,7 @@ export class ViewReservationComponent implements OnInit{
 
 
   tableData(){
-    this.reservationService.getReservations().subscribe((response:any)=>{
+    this.reservationService.getReservationsRuc().subscribe((response:any)=>{
       this.ngxService.stop();
       this.dataSource = new MatTableDataSource(response);
     },(error:any)=>{
@@ -62,7 +65,7 @@ export class ViewReservationComponent implements OnInit{
       data:values
     }
     dialogConfig.width = "100%";
-    const dialogRef = this.dialog.open(ViewReservationRoomsComponent, dialogConfig);
+    const dialogRef = this.dialog.open(ViewReservationRucRoomsComponent, dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     })
@@ -83,7 +86,7 @@ export class ViewReservationComponent implements OnInit{
   }
 
   deleteReservation(id:any){
-    this.reservationService.delete(id).subscribe((response:any)=>{
+    this.reservationService.deleteRuc(id).subscribe((response:any)=>{
       this.ngxService.stop();
       this.tableData();
       this.responseMessage = response?.message;
@@ -103,10 +106,11 @@ export class ViewReservationComponent implements OnInit{
   downloadReportAction(values:any){
     this.ngxService.start();
     var data = {
-      name: values.name,
-      email:values.email,
       uuid:values.uuid,
-      contactNumber:values.contactNumber,
+      razSocial: values.razSocial,
+      ruc: values.ruc,
+      dateCreated: values.dateCreated,
+      address: values.address,
       paymentMethod:values.paymentMethod,
       date:values.date,
       totalAmount: values.total.toString(),
@@ -116,7 +120,7 @@ export class ViewReservationComponent implements OnInit{
   }
 
   downloadFile(fileName:string,data:any){
-    this.reservationService.getPdf(data).subscribe((response)=>{
+    this.reservationService.getPdfRuc(data).subscribe((response)=>{
       saveAs(response,fileName+'.pdf');
       this.ngxService.stop();
     })

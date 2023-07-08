@@ -1,5 +1,5 @@
 <mat-card>
-  <b><span>Administrar Reservaciones</span></b>
+  <b><span>Administrar Reservaciones (Persona Natural)</span></b>
   <button class="float-right" mat-flat-button color="primary" (click)="submitAction()" [disabled]="validateSubmit()">
     <mat-icon>print</mat-icon> Enviar & obtener reservacion
   </button>
@@ -157,7 +157,7 @@
     </ng-container>
 
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>Fecha</th>
+      <th mat-header-cell *matHeaderCellDef>Fecha de reserva</th>
       <td mat-cell *matCellDef="let element">{{element.date}}</td>
     </ng-container>
 

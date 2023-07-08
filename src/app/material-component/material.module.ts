@@ -24,6 +24,9 @@ import { ManageReservationComponent } from './manage-reservation/manage-reservat
 import { ViewReservationComponent } from './view-reservation/view-reservation.component';
 import { ViewReservationRoomsComponent } from './dialog/view-reservation-rooms/view-reservation-rooms.component';
 import { ManageUserComponent } from './manage-user/manage-user.component';
+import { ManageReservationRucComponent } from './manage-reservation-ruc/manage-reservation-ruc.component';
+import { ViewReservationRucComponent } from './view-reservation-ruc/view-reservation-ruc.component';
+import { ViewReservationRucRoomsComponent } from './dialog/view-reservation-ruc-rooms/view-reservation-ruc-rooms.component';
 
 @NgModule({
   imports: [
@@ -52,7 +55,10 @@ import { ManageUserComponent } from './manage-user/manage-user.component';
     ManageReservationComponent,
     ViewReservationComponent,
     ViewReservationRoomsComponent,
-    ManageUserComponent
+    ManageUserComponent,
+    ManageReservationRucComponent,
+    ViewReservationRucComponent,
+    ViewReservationRucRoomsComponent
   ]
 })
 export class MaterialComponentsModule {}

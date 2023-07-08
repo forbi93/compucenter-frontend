@@ -33,4 +33,28 @@ export class ReservationService {
       headers: new HttpHeaders().set('Content-Type',"application/json")
     });
   }
+
+  generateReportRuc(data:any){
+    return this.httpClient.post(this.url+
+      "/reservationRuc/generateReport",data,{
+      headers: new HttpHeaders().set('Content-Type',"application/json")
+    })
+  }
+
+  getPdfRuc(data:any):Observable<Blob>{
+    return this.httpClient.post(this.url+"/reservationRuc/getPdf",data,{responseType:'blob'});
+  }
+
+  getReservationsRuc(){
+    return this.httpClient.get(this.url+"/reservationRuc/getReservations");
+  }
+
+  deleteRuc(id:any){
+    return this.httpClient.post(this.url+
+      "/reservationRuc/delete/"+id,{
+      headers: new HttpHeaders().set('Content-Type',"application/json")
+    });
+  }
+
+
 }

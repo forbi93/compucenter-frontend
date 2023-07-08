@@ -1,22 +1,21 @@
 import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {TyperoomService} from "../../services/typeroom.service";
 import {RoomService} from "../../services/room.service";
+import {ReservationService} from "../../services/reservation.service";
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog} from "@angular/material/dialog";
 import {SnackbarService} from "../../services/snackbar.service";
 import {Router} from "@angular/router";
 import {GlobalConstants} from "../../shared/global-constants";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {TyperoomService} from "../../services/typeroom.service";
-import {ReservationService} from "../../services/reservation.service";
-
 import {saveAs} from "file-saver";
 import {
-    MAT_MOMENT_DATE_FORMATS,
+  MAT_MOMENT_DATE_FORMATS,
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core'
-import {registerLocaleData} from "@angular/common";
+import {DatePipe, registerLocaleData} from "@angular/common";
 import localeES from '@angular/common/locales/es'
 
 registerLocaleData(localeES, 'es');
@@ -34,18 +33,18 @@ export const MY_FORMATS = {
 };
 
 @Component({
-  selector: 'app-manage-reservation',
-  templateUrl: './manage-reservation.component.html',
+  selector: 'app-manage-reservation-ruc',
+  templateUrl: './manage-reservation-ruc.component.html',
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
     {provide: DateAdapter,
-    useClass: MomentDateAdapter,
-    deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-  },
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}],
-  styleUrls: ['./manage-reservation.component.css']
+  styleUrls: ['./manage-reservation-ruc.component.css']
 })
-export class ManageReservationComponent implements OnInit{
+export class ManageReservationRucComponent implements OnInit{
 
   displayedColumns: string[] = ['name','typeRoom','price','quantity','total','date','edit'];
   dataSource:any = [];
@@ -70,10 +69,10 @@ export class ManageReservationComponent implements OnInit{
     this.ngxService.start();
     this.getTypeRooms();
     this.manageReservationForm = this.formBuilder.group({
-      name:[null,[Validators.required]],
-      email:[null,[Validators.required]],
-      contactNumber:[null,[Validators.required]],
+      razSocial:[null,[Validators.required]],
+      ruc:[null,[Validators.required]],
       dateCreated:[null,[Validators.required]],
+      address:[null,[Validators.required]],
       paymentMethod:[null,[Validators.required]],
       room:[null,[Validators.required]],
       typeRoom:[null,[Validators.required]],
@@ -144,7 +143,7 @@ export class ManageReservationComponent implements OnInit{
     else if(temp != ''){
       this.manageReservationForm.controls['quantity'].setValue('1');
       this.manageReservationForm.controls['total'].setValue(this.manageReservationForm.controls['quantity'].value *
-      this.manageReservationForm.controls['price'].value);
+        this.manageReservationForm.controls['price'].value);
     }
   }
 
@@ -158,9 +157,9 @@ export class ManageReservationComponent implements OnInit{
   }
 
   validateSubmit(){
-    if (this.totalAmount === 0 || this.manageReservationForm.controls['name'].value === null ||
-      this.manageReservationForm.controls['email'].value === null ||
-      this.manageReservationForm.controls['contactNumber'].value === null ||
+    if (this.totalAmount === 0 || this.manageReservationForm.controls['razSocial'].value === null ||
+      this.manageReservationForm.controls['ruc'].value === null ||
+      this.manageReservationForm.controls['address'].value === null ||
       this.manageReservationForm.controls['paymentMethod'].value === null){
       return true;
     }
@@ -216,9 +215,9 @@ export class ManageReservationComponent implements OnInit{
     });
     var formData = this.manageReservationForm.value;
     var data = {
-      name: formData.name,
-      email: formData.email,
-      contactNumber: formData.contactNumber,
+      razSocial: formData.razSocial,
+      ruc: formData.ruc,
+      address: formData.address,
       paymentMethod: formData.paymentMethod,
       date:formData.date,
       dateCreated: formattedDateTimezone,
@@ -227,7 +226,7 @@ export class ManageReservationComponent implements OnInit{
     }
 
     this.ngxService.start();
-    this.reservationService.generateReport(data).subscribe((response:any)=>{
+    this.reservationService.generateReportRuc(data).subscribe((response:any)=>{
       this.downloadFile(response?.uuid);
       this.manageReservationForm.reset();
       this.dataSource = [];
@@ -248,7 +247,7 @@ export class ManageReservationComponent implements OnInit{
       uuid: fileName
     }
 
-    this.reservationService.getPdf(data).subscribe((response:any)=>{
+    this.reservationService.getPdfRuc(data).subscribe((response:any)=>{
       saveAs(response, fileName + '.pdf');
       this.ngxService.stop();
     })

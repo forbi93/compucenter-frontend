@@ -8,6 +8,8 @@ import {ManageRoomComponent} from "./manage-room/manage-room.component";
 import {ManageReservationComponent} from "./manage-reservation/manage-reservation.component";
 import {ViewReservationComponent} from "./view-reservation/view-reservation.component";
 import {ManageUserComponent} from "./manage-user/manage-user.component";
+import {ManageReservationRucComponent} from "./manage-reservation-ruc/manage-reservation-ruc.component";
+import {ViewReservationRucComponent} from "./view-reservation-ruc/view-reservation-ruc.component";
 
 
 export const MaterialRoutes: Routes = [
@@ -52,8 +54,24 @@ export const MaterialRoutes: Routes = [
     }
   },
   {
+    path:'reservation-ruc',
+    component:ManageReservationRucComponent,
+    canActivate:[RouteGuardService],
+    data:{
+      expectedRole: ['admin','user']
+    }
+  },
+  {
     path: 'reservation-view',
     component: ViewReservationComponent,
+    canActivate: [RouteGuardService],
+    data: {
+      expectedRole: ['admin', 'user']
+    }
+  },
+  {
+    path: 'reservation-view-ruc',
+    component: ViewReservationRucComponent,
     canActivate: [RouteGuardService],
     data: {
       expectedRole: ['admin', 'user']
