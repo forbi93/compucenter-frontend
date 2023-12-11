@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row fxLayout="row">
-    <span>{{dialogData.action}} Cliente</span>
+    <span>{{dialogData.action}} Producto</span>
     <span class="spacer"></span>
     <button class="class-dialog-close" mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
@@ -9,40 +9,40 @@
 </mat-toolbar>
 
 <mat-dialog-content class="mat-typography">
-  <form [formGroup]="customerForm">
+  <form [formGroup]="productForm">
     <div fxFlex fxLayout="column">
       <mat-form-field appearance="fill" fxFlex>
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="nombre" required>
-        <mat-error *ngIf="customerForm.controls.nombre.touched && customerForm.controls.nombre.invalid">
-          <span *ngIf="customerForm.controls.nombre.errors.required">Este campo es obligatorio.</span>
+        <mat-error *ngIf="productForm.controls.nombre.touched && productForm.controls.nombre.invalid">
+          <span *ngIf="productForm.controls.nombre.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Dirección</mat-label>
-        <input matInput formControlName="direccion" required>
-        <mat-error *ngIf="customerForm.controls.direccion.touched && customerForm.controls.direccion.invalid">
-          <span *ngIf="customerForm.controls.direccion.errors.required">Este campo es obligatorio.</span>
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="descripcion" required>
+        <mat-error *ngIf="productForm.controls.descripcion.touched && productForm.controls.descripcion.invalid">
+          <span *ngIf="productForm.controls.descripcion.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono" required>
-        <mat-error *ngIf="customerForm.controls.telefono.touched && customerForm.controls.telefono.invalid">
-          <span *ngIf="customerForm.controls.telefono.errors.required">Este campo es obligatorio.</span>
+        <mat-label>Precio Unitario</mat-label>
+        <input matInput formControlName="precioUnitario" required>
+        <mat-error *ngIf="productForm.controls.precioUnitario.touched && productForm.controls.precioUnitario.invalid">
+          <span *ngIf="productForm.controls.precioUnitario.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Correo electrónico</mat-label>
-        <input matInput formControlName="correo" required>
-        <mat-error *ngIf="customerForm.controls.correo.touched && customerForm.controls.correo.invalid">
-          <span *ngIf="customerForm.controls.correo.errors.required">Este campo es obligatorio.</span>
+        <mat-label>Stock</mat-label>
+        <input matInput formControlName="stock" required>
+        <mat-error *ngIf="productForm.controls.stock.touched && productForm.controls.stock.invalid">
+          <span *ngIf="productForm.controls.stock.errors.required">Este campo es obligatorio.</span>
         </mat-error>
       </mat-form-field>
 
@@ -64,7 +64,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-raised-button color="primary" type="submit" (click)="handleSubmit()"
-          [disabled]="!(customerForm.valid && customerForm.dirty)">
+          [disabled]="!(productForm.valid && productForm.dirty)">
     <mat-icon>save</mat-icon>
     {{action}}
   </button>

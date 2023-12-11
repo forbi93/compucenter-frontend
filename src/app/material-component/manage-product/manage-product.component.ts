@@ -1,30 +1,29 @@
 import {Component, OnInit} from '@angular/core';
-import {CustomerService} from "../../services/customer.service";
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {SnackbarService} from "../../services/snackbar.service";
 import {Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {GlobalConstants} from "../../shared/global-constants";
-import {CategoryComponent} from "../dialog/category/category.component";
-import {CustomerComponent} from "../dialog/customer/customer.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
 import {DateService} from "../../services/date.service";
+import {ProductService} from "../../services/product.service";
+import {ProductComponent} from "../dialog/product/product.component";
 
 @Component({
-  selector: 'app-manage-customer',
-  templateUrl: './manage-customer.component.html',
-  styleUrls: ['./manage-customer.component.css']
+  selector: 'app-manage-product',
+  templateUrl: './manage-product.component.html',
+  styleUrls: ['./manage-product.component.css']
 })
-export class ManageCustomerComponent implements OnInit{
+export class ManageProductComponent implements OnInit{
 
-  displayedColumns: string[] = ['nombre','direccion','telefono','correo','fechaCreacion','fechaActualizacion', 'edit'];
+  displayedColumns: string[] = ['nombre','descripcion','precioUnitario','stock', 'edit'];
   dataSource:any;
   responseMessage:any;
 
   dateService: DateService;
 
-  constructor(private customerService:CustomerService,
+  constructor(private productService:ProductService,
               private ngxService:NgxUiLoaderService,
               private dialog:MatDialog,
               private snackbarService:SnackbarService,
@@ -40,7 +39,7 @@ export class ManageCustomerComponent implements OnInit{
   }
 
   tableData(){
-    this.customerService.getCustomers().subscribe((response:any)=>{
+    this.productService.getProducts().subscribe((response:any)=>{
       this.ngxService.stop();
       this.dataSource = new MatTableDataSource(response);
     },(error:any)=>{
@@ -66,11 +65,11 @@ export class ManageCustomerComponent implements OnInit{
       action: 'Add'
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(ProductComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onAddProduct.subscribe((response)=>{
       this.tableData();
     })
   }
@@ -82,30 +81,30 @@ export class ManageCustomerComponent implements OnInit{
       data:values
     }
     dialogConfig.width = "850px";
-    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    const dialogRef = this.dialog.open(ProductComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onEditCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onEditProduct.subscribe((response)=>{
       this.tableData();
     })
   }
   handleDeleteAction(values:any){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message:'eliminar' + values.nombre+' customer',
+      message:'eliminar' + values.nombre+' product',
       confirmation:true
     }
     const dialogRef = this.dialog.open(ConfirmationComponent,dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response)=>{
       this.ngxService.start();
-      this.deleteCustomer(values.idCliente);
+      this.deleteProduct(values.idProducto);
       dialogRef.close();
     })
   }
 
-  deleteCustomer(id:any){
-    this.customerService.delete(id).subscribe((response:any)=>{
+  deleteProduct(id:any){
+    this.productService.delete(id).subscribe((response:any)=>{
       this.ngxService.stop();
       this.tableData();
       this.responseMessage = response?.message;

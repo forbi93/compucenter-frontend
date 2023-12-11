@@ -11,13 +11,15 @@ import {ReservationService} from "../../services/reservation.service";
 
 import {saveAs} from "file-saver";
 import {
-    MAT_MOMENT_DATE_FORMATS,
+  MAT_MOMENT_DATE_FORMATS,
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core'
 import {registerLocaleData} from "@angular/common";
 import localeES from '@angular/common/locales/es'
+import {ProductService} from "../../services/product.service";
+import {SaleService} from "../../services/sale.service";
 
 registerLocaleData(localeES, 'es');
 
@@ -35,60 +37,58 @@ export const MY_FORMATS = {
 
 @Component({
   selector: 'app-manage-reservation',
-  templateUrl: './manage-reservation.component.html',
+  templateUrl: './manage-sale.component.html',
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
-    {provide: DateAdapter,
-    useClass: MomentDateAdapter,
-    deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-  },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}],
-  styleUrls: ['./manage-reservation.component.css']
+  styleUrls: ['./manage-sale.component.css']
 })
-export class ManageReservationComponent implements OnInit{
+export class ManageSaleComponent implements OnInit {
 
-  displayedColumns: string[] = ['name','typeRoom','price','quantity','total','date','edit'];
-  dataSource:any = [];
-  manageReservationForm:any = FormGroup;
-  typeRooms:any = [];
-  rooms: any = [];
+  displayedColumns: string[] = ['producto', 'descripcionProduct', 'precio', 'cantidad', 'subtotal', 'edit'];
+  dataSource: any = [];
+  manageSaleForm: any = FormGroup;
+  typeRooms: any = [];
+  products: any = [];
   price: any;
-  totalAmount: number=0;
-  responseMessage:any;
+  totalVenta: number = 0;
+  responseMessage: any;
+  precioUnitario: any;
 
   constructor(private formBuilder: FormBuilder,
-              private typeRoomService:TyperoomService,
-              private roomService:RoomService,
-              private reservationService: ReservationService,
-              private ngxService:NgxUiLoaderService,
-              private dialog:MatDialog,
-              private snackbarService:SnackbarService,
-              private router:Router) {
+              private productService: ProductService,
+              private saleService: SaleService,
+              private ngxService: NgxUiLoaderService,
+              private dialog: MatDialog,
+              private snackbarService: SnackbarService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
     this.ngxService.start();
-    this.getTypeRooms();
-    this.manageReservationForm = this.formBuilder.group({
-      name:[null,[Validators.required]],
-      email:[null,[Validators.required]],
-      contactNumber:[null,[Validators.required]],
-      dateCreated:[null,[Validators.required]],
-      paymentMethod:[null,[Validators.required]],
-      room:[null,[Validators.required]],
-      typeRoom:[null,[Validators.required]],
-      quantity:[null,[Validators.required]],
-      price:[null,[Validators.required]],
-      date:[null,[Validators.required]],
-      total:[null,[Validators.required]],
-    })
+    this.testMethod();
+    this.manageSaleForm = this.formBuilder.group({
+      idCliente: [null, [Validators.required]],
+      producto: [null, [Validators.required]],
+      precioUnitario: [null, [Validators.required]],
+      cantidad: [null, [Validators.required]],
+      subtotal: [null, [Validators.required]],
+
+      // // Detalles de ventas (en caso de que quieras manejar más de un detalle de venta)
+      // detalleVentas: this.formBuilder.array([]),
+    });
 
   }
 
-  getTypeRooms(){
-    this.typeRoomService.getFilteredTypeRoom().subscribe((response:any)=>{
+  testMethod(){
+    this.productService.getProducts().subscribe((response:any)=>{
       this.ngxService.stop();
-      this.typeRooms = response;
+      this.products = response;
     },(error:any)=>{
       this.ngxService.stop();
       console.log(error);
@@ -101,158 +101,145 @@ export class ManageReservationComponent implements OnInit{
     })
   }
 
-  getRoomsByTypeRoom(value: any){
-    this.roomService.getRoomByTypeRoom(value.id).subscribe((response:any)=>{
-      this.rooms = response;
-      this.manageReservationForm.controls['price'].setValue('');
-      this.manageReservationForm.controls['quantity'].setValue('');
-      this.manageReservationForm.controls['total'].setValue(0);
-    },(error:any)=>{
-      console.log(error);
-      if (error.error?.message){
-        this.responseMessage = error.error?.message;
-      }else{
-        this.responseMessage = GlobalConstants.genericError;
+  getProducts(value: any) {
+    console.log(value);
+    this.productService.getProductById(value.idProducto).subscribe((response: any) => {
+        this.ngxService.stop();
+        this.precioUnitario = response.precioUnitario;
+
+        // Establecer el precio unitario en el formulario
+        this.manageSaleForm.controls['precioUnitario'].setValue(response.precioUnitario);
+
+        // Establecer la cantidad predeterminada a 1 (puedes ajustar esto según tus necesidades)
+        this.manageSaleForm.controls['cantidad'].setValue(1);
+
+        // Calcular y establecer el valor del subtotal
+        const cantidad = this.manageSaleForm.controls['cantidad'].value;
+        const subtotal = cantidad * response.precioUnitario;
+        this.manageSaleForm.controls['subtotal'].setValue(subtotal);
+
+      }, (error: any) => {
+        this.ngxService.stop();
+        console.log(error);
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = GlobalConstants.genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, GlobalConstants.error);
       }
-      this.snackbarService.openSnackBar(this.responseMessage,GlobalConstants.error);
-    })
+    );
   }
 
-  getRoomDetails(value:any){
-    this.roomService.getById(value.id).subscribe((response:any)=>{
-      this.price = response.price;
-      this.manageReservationForm.controls['price'].setValue(response.price);
-      this.manageReservationForm.controls['quantity'].setValue('1');
-      this.manageReservationForm.controls['total'].setValue(this.price * 1);
-    },(error:any)=>{
-      this.ngxService.stop();
-      console.log(error);
-      if(error.error?.message){
-        this.responseMessage = error.error?.message;
-      }else{
-        this.responseMessage = GlobalConstants.genericError;
-      }
-      this.snackbarService.openSnackBar(this.responseMessage,GlobalConstants.error);
-    })
-  }
 
-  setQuantity(value:any){
-    var temp = this.manageReservationForm.controls['quantity'].value;
-    if (temp > 0){
-      this.manageReservationForm.controls['total'].setValue(this.manageReservationForm.controls['quantity'].value * this.manageReservationForm.controls['price'].value)
-    }
-    else if(temp != ''){
-      this.manageReservationForm.controls['quantity'].setValue('1');
-      this.manageReservationForm.controls['total'].setValue(this.manageReservationForm.controls['quantity'].value *
-      this.manageReservationForm.controls['price'].value);
+  setQuantity(value: any) {
+    var temp = this.manageSaleForm.controls['cantidad'].value;
+    if (temp > 0) {
+      this.manageSaleForm.controls['subtotal'].setValue(this.manageSaleForm.controls['cantidad'].value * this.manageSaleForm.controls['precioUnitario'].value)
+    } else if (temp != '') {
+      this.manageSaleForm.controls['cantidad'].setValue('1');
+      this.manageSaleForm.controls['subtotal'].setValue(this.manageSaleForm.controls['cantidad'].value *
+        this.manageSaleForm.controls['precio'].value);
     }
   }
 
-  validateRoomAdd(){
-    if (this.manageReservationForm.controls['total'].value === 0 || this.manageReservationForm.controls['total'].value === null ||
-      this.manageReservationForm.controls['quantity'].value <= 0){
+  validateRoomAdd() {
+    if (this.manageSaleForm.controls['subtotal'].value === 0 || this.manageSaleForm.controls['subtotal'].value === null ||
+      this.manageSaleForm.controls['cantidad'].value <= 0) {
       return true;
-    }
-    else
+    } else
       return false;
   }
 
-  validateSubmit(){
-    if (this.totalAmount === 0 || this.manageReservationForm.controls['name'].value === null ||
-      this.manageReservationForm.controls['email'].value === null ||
-      this.manageReservationForm.controls['contactNumber'].value === null ||
-      this.manageReservationForm.controls['paymentMethod'].value === null){
+  validateSubmit() {
+    if (this.totalVenta === 0 || this.manageSaleForm.controls['idCliente'].value === null) {
       return true;
-    }
-    else
+    } else
       return false;
   }
 
-  add(){
-    var testing = this.manageReservationForm.get('date').value.format('LL')
-    var formData = this.manageReservationForm.value;
-    var roomName = this.dataSource.find((e: {id:number}) => e.id === formData.room.id);
-    if (roomName === undefined){
-      this.totalAmount = this.totalAmount + formData.total;
+  add() {
+    // var testing = this.manageSaleForm.get('date').value.format('LL')
+    var formData = this.manageSaleForm.value;
+    var product = this.dataSource.find((e: { id: number }) => e.id === formData.producto.idProducto);
+    if (product === undefined) {
+      this.totalVenta = this.totalVenta + formData.subtotal;
       this.dataSource.push({
-        id:formData.room.id,
-        name:formData.room.name,
-        typeRoom:formData.typeRoom.name,
-        quantity:formData.quantity,
-        price:formData.price,
-        date:testing,
-        total:formData.total,
+        productoId: formData.producto.idProducto,
+        nombreProducto: formData.producto.nombre,
+        descripcionProducto: formData.producto.descripcion,
+        precioUnitario: formData.producto.precioUnitario,
+        cantidad: formData.cantidad,
+        subtotal: formData.subtotal,
+        // price: formData.price,
+        // // date: testing,
+        // total: formData.total,
 
       })
       this.dataSource = [...this.dataSource];
-      this.snackbarService.openSnackBar(GlobalConstants.roomAdded,"success");
-    }
-    else {
+      this.snackbarService.openSnackBar(GlobalConstants.roomAdded, "success");
+    } else {
       this.snackbarService.openSnackBar(GlobalConstants.roomExistError, GlobalConstants.error);
     }
   }
 
-  handleDeleteAction(value:any,element:any){
-    this.totalAmount = this.totalAmount - element.total;
-    this.dataSource.splice(value,1);
+  handleDeleteAction(value: any, element: any) {
+    this.totalVenta = this.totalVenta - element.total;
+    this.dataSource.splice(value, 1);
     this.dataSource = [...this.dataSource];
   }
 
-  submitAction(){
-    var currentDate = new Date();
-    var formattedDate = currentDate.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+  submitAction() {
+    var formData = this.manageSaleForm.value;
 
-    var currentDateTimezone = new Date(currentDate.getTime() - (5 * 60 * 60 * 1000)); // Convert to GMT-5 timezone
+    // Convertir dataSource a un array de objetos
+    const detalleVentasArray = this.dataSource.map((item: { productoId: any; precioUnitario: any; cantidad: any; subtotal: any; }) => ({
+      productoId: item.productoId,
+      precioUnitario: item.precioUnitario,
+      cantidad: item.cantidad,
+      subtotal: item.subtotal
+    }));
 
-    var formattedDateTimezone = currentDateTimezone.toLocaleString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'America/Bogota'
-    });
-    var formData = this.manageReservationForm.value;
     var data = {
-      name: formData.name,
-      email: formData.email,
-      contactNumber: formData.contactNumber,
-      paymentMethod: formData.paymentMethod,
-      date:formData.date,
-      dateCreated: formattedDateTimezone,
-      totalAmount: this.totalAmount.toString(),
-      roomDetails: JSON.stringify(this.dataSource)
-    }
+      clienteId: formData.idCliente,
+      totalVenta: this.totalVenta.toString(),
+      detalleVentas: detalleVentasArray
+    };
 
     this.ngxService.start();
-    this.reservationService.generateReport(data).subscribe((response:any)=>{
-      this.downloadFile(response?.uuid);
-      this.manageReservationForm.reset();
-      this.dataSource = [];
-      this.totalAmount = 0;
-    },(error:any)=>{
-      console.log(error);
-      if (error.error?.message) {
-        this.responseMessage = error.error?.message;
-      } else {
-        this.responseMessage = GlobalConstants.genericError;
+    this.saleService.add(data).subscribe(
+      (response: any) => {
+        // this.downloadFile(response?.uuid);
+        this.manageSaleForm.reset();
+        this.dataSource = [];
+        this.totalVenta = 0;
+      },
+      (error: any) => {
+        console.log(error);
+        if (error.error?.message) {
+          this.responseMessage = error.error?.message;
+        } else {
+          this.responseMessage = GlobalConstants.genericError;
+        }
+        this.snackbarService.openSnackBar(this.responseMessage, GlobalConstants.error);
       }
-      this.snackbarService.openSnackBar(this.responseMessage,GlobalConstants.error);
-    })
+    );
+
+    this.ngxService.stop();
+
+    console.log(data);
   }
 
-  downloadFile(fileName: string){
-    var data = {
-      uuid: fileName
-    }
-
-    this.reservationService.getPdf(data).subscribe((response:any)=>{
-      saveAs(response, fileName + '.pdf');
-      this.ngxService.stop();
-    })
-  }
+  // downloadFile(fileName: string){
+  //   var data = {
+  //     uuid: fileName
+  //   }
+  //
+  //   this.reservationService.getPdf(data).subscribe((response:any)=>{
+  //     saveAs(response, fileName + '.pdf');
+  //     this.ngxService.stop();
+  //   })
+  // }
 
 
 }

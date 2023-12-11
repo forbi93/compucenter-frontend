@@ -1,52 +1,21 @@
 <mat-card>
-  <b><span>Administrar Reservaciones (Persona Natural)</span></b>
+  <b><span>Generar Venta</span></b>
   <button class="float-right" mat-flat-button color="primary" (click)="submitAction()" [disabled]="validateSubmit()">
-    <mat-icon>print</mat-icon> Enviar & obtener reservacion
+    <mat-icon>print</mat-icon> Procesar Venta
   </button>
 </mat-card>
 <hr>
 <mat-card>
   <b><span>Detalle del Cliente:</span></b>
-  <form [formGroup]="manageReservationForm">
+  <form [formGroup]="manageSaleForm">
     <div fxFlex fxLayout="column">
       <div fxLayout="row wrap">
         <mat-form-field appearance="fill" fxFlex>
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="name" required>
-          <mat-error *ngIf="manageReservationForm.controls.name.touched && manageReservationForm.controls.name.invalid">
-            <span *ngIf="manageReservationForm.controls.name.errors.required">This field is mandatory</span>
-            <span *ngIf="manageReservationForm.controls.name.errors.pattern">This field is invalid.</span>
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" fxFlex>
-          <mat-label>Correo</mat-label>
-          <input matInput formControlName="email" required>
-          <mat-error *ngIf="manageReservationForm.controls.email.touched && manageReservationForm.controls.email.invalid">
-            <span *ngIf="manageReservationForm.controls.email.errors.required">This field is mandatory</span>
-            <span *ngIf="manageReservationForm.controls.email.errors.pattern">This field is invalid.</span>
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" fxFlex>
-          <mat-label>Celular</mat-label>
-          <input matInput formControlName="contactNumber" required>
-          <mat-error *ngIf="manageReservationForm.controls.contactNumber.touched && manageReservationForm.controls.contactNumber.invalid">
-            <span *ngIf="manageReservationForm.controls.contactNumber.errors.required">This field is mandatory</span>
-            <span *ngIf="manageReservationForm.controls.contactNumber.errors.pattern">This field is invalid.</span>
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" fxFlex>
-          <mat-label>Método de pago</mat-label>
-          <mat-select formControlName="paymentMethod" required>
-            <mat-option value="Efectivo">Efectivo</mat-option>
-            <mat-option value="Tarjeta de Crédito">Tarjeta de Crédito</mat-option>
-            <mat-option value="Tarjeta de Débito">Tarjeta de Débito</mat-option>
-          </mat-select>
-          <mat-error *ngIf="manageReservationForm.controls.paymentMethod.touched && manageReservationForm.controls.paymentMethod.invalid">
-            <span *ngIf="manageReservationForm.controls.paymentMethod.errors.required">This field is mandatory</span>
-            <span *ngIf="manageReservationForm.controls.paymentMethod.errors.pattern">This field is invalid.</span>
+          <mat-label>idCliente</mat-label>
+          <input matInput formControlName="idCliente" required>
+          <mat-error *ngIf="manageSaleForm.controls.idCliente.touched && manageSaleForm.controls.idCliente.invalid">
+            <span *ngIf="manageSaleForm.controls.idCliente.errors.required">This field is mandatory</span>
+            <span *ngIf="manageSaleForm.controls.idCliente.errors.pattern">This field is invalid.</span>
           </mat-error>
         </mat-form-field>
       </div>
@@ -56,115 +25,107 @@
 
 <hr>
 <mat-card>
-<b><span>Seleccionar Habitación:-</span></b>
+  <b><span>Seleccionar Productos:</span></b>
 
-<form [formGroup]="manageReservationForm">
-  <div fxFlex fxLayout="column">
-    <div fxLayout="row wrap">
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Tipo de Habitacion</mat-label>
-        <mat-select formControlName="typeRoom" (selectionChange)="getRoomsByTypeRoom($event.value)">
-          <mat-option *ngFor="let typeRoom of typeRooms" [value]="typeRoom">
-            {{typeRoom.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <form [formGroup]="manageSaleForm">
+    <div fxFlex fxLayout="column">
+      <div fxLayout="row wrap">
+        <!--      <mat-form-field appearance="fill" fxFlex>-->
+        <!--        <mat-label>Producto</mat-label>-->
+        <!--        <mat-select formControlName="product" (selectionChange)="getRoomsByTypeRoom($event.value)">-->
+        <!--          <mat-option *ngFor="let product of products" [value]="product">-->
+        <!--            {{product.name}}-->
+        <!--          </mat-option>-->
+        <!--        </mat-select>-->
+        <!--      </mat-form-field>-->
 
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Habitacion</mat-label>
-        <mat-select formControlName="room" (selectionChange)="getRoomDetails($event.value)">
-          <mat-option *ngFor="let room of rooms" [value]="room">
-            {{room.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+        <mat-form-field appearance="fill" fxFlex>
+          <mat-label>Producto</mat-label>
+          <mat-select formControlName="producto" (selectionChange)="getProducts($event.value)">
+            <mat-option *ngFor="let product of products" [value]="product">
+              {{product.nombre}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <mat-form-field>
-        <input matInput [matDatepicker]="picker" formControlName="date">
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+        <mat-form-field appearance="fill" fxFlex>
+          <mat-label>Precio Unitario</mat-label>
+          <input matInput formControlName="precioUnitario" required readonly>
+          <mat-error *ngIf="manageSaleForm.controls.precioUnitario.touched && manageSaleForm.controls.precioUnitario.invalid">
+            <span *ngIf="manageSaleForm.controls.precioUnitario.errors.required">This field is mandatory</span>
+            <span *ngIf="manageSaleForm.controls.precioUnitario.errors.pattern">This field is invalid.</span>
+          </mat-error>
+        </mat-form-field>
 
+        <mat-form-field appearance="fill" fxFlex>
+          <mat-label>Cantidad</mat-label>
+          <input matInput formControlName="cantidad" required (keyup)="setQuantity($event)" #input>
+          <mat-error *ngIf="manageSaleForm.controls.cantidad.touched && manageSaleForm.controls.cantidad.invalid">
+            <span *ngIf="manageSaleForm.controls.cantidad.errors.required">This field is mandatory</span>
+            <span *ngIf="manageSaleForm.controls.cantidad.errors.pattern">This field is invalid.</span>
+          </mat-error>
+        </mat-form-field>
 
-
-<!--      <mat-form-field appearance="fill" fxFlex>-->
-<!--        <mat-label>Precio/Hora</mat-label>-->
-<!--        <input matInput formControlName="date" required>-->
-<!--        <mat-error *ngIf="manageReservationForm.controls.date.touched && manageReservationForm.controls.date.invalid">-->
-<!--          <span *ngIf="manageReservationForm.controls.date.errors.required">This field is mandatory</span>-->
-<!--          <span *ngIf="manageReservationForm.controls.date.errors.pattern">This field is invalid.</span>-->
-<!--        </mat-error>-->
-<!--      </mat-form-field>-->
-
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Precio/Hora</mat-label>
-        <input matInput formControlName="price" required readonly>
-        <mat-error *ngIf="manageReservationForm.controls.price.touched && manageReservationForm.controls.price.invalid">
-          <span *ngIf="manageReservationForm.controls.price.errors.required">This field is mandatory</span>
-          <span *ngIf="manageReservationForm.controls.price.errors.pattern">This field is invalid.</span>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Horas</mat-label>
-        <input matInput formControlName="quantity" required (keyup)="setQuantity($event)" #input>
-        <mat-error *ngIf="manageReservationForm.controls.quantity.touched && manageReservationForm.controls.quantity.invalid">
-          <span *ngIf="manageReservationForm.controls.quantity.errors.required">This field is mandatory</span>
-          <span *ngIf="manageReservationForm.controls.quantity.errors.pattern">This field is invalid.</span>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Total</mat-label>
-        <input matInput formControlName="total" required readonly>
-        <mat-error *ngIf="manageReservationForm.controls.total.touched && manageReservationForm.controls.total.invalid">
-          <span *ngIf="manageReservationForm.controls.total.errors.required">This field is mandatory</span>
-          <span *ngIf="manageReservationForm.controls.total.errors.pattern">This field is invalid.</span>
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="fill" fxFlex>
+          <mat-label>Total</mat-label>
+          <input matInput formControlName="subtotal" required readonly>
+          <mat-error *ngIf="manageSaleForm.controls.subtotal.touched && manageSaleForm.controls.subtotal.invalid">
+            <span *ngIf="manageSaleForm.controls.subtotal.errors.required">This field is mandatory</span>
+            <span *ngIf="manageSaleForm.controls.subtotal.errors.pattern">This field is invalid.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
   <div>
-    <button mat-flat-button color="primary" [disabled]="validateRoomAdd()" (click)="add()">Add</button>
+    <button mat-flat-button color="primary" [disabled]="validateRoomAdd()" (click)="add()">Agregar</button>
     <button mat-flat-button color="primary" class="float-right">
-      <mat-icon>monetization_on</mat-icon> Total Amount: {{totalAmount}}
+      <mat-icon>monetization_on</mat-icon> Total: {{totalVenta}}
     </button>
   </div>
 </mat-card>
 <hr>
 <div class="responsive_table">
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name</th>
-      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+<!--    <ng-container matColumnDef="idCliente">-->
+<!--      <th mat-header-cell *matHeaderCellDef> idCliente</th>-->
+<!--      <td mat-cell *matCellDef="let element">{{element.idCliente}}</td>-->
+<!--    </ng-container>-->
+
+    <ng-container matColumnDef="producto">
+      <th mat-header-cell *matHeaderCellDef> Producto </th>
+      <td mat-cell *matCellDef="let element">{{element.nombreProducto}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="typeRoom">
-      <th mat-header-cell *matHeaderCellDef> Tipo de Habitación</th>
-      <td mat-cell *matCellDef="let element">{{element.typeRoom}}</td>
+    <ng-container matColumnDef="descripcionProduct">
+      <th mat-header-cell *matHeaderCellDef> Descripción </th>
+      <td mat-cell *matCellDef="let element">{{element.descripcionProducto}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="price">
-      <th mat-header-cell *matHeaderCellDef> Precio por Hora</th>
-      <td mat-cell *matCellDef="let element">{{element.price}}</td>
+<!--    <ng-container matColumnDef="productoId">-->
+<!--      <th mat-header-cell *matHeaderCellDef> productoId</th>-->
+<!--      <td mat-cell *matCellDef="let element">{{element.productoId}}</td>-->
+<!--    </ng-container>-->
+
+    <ng-container matColumnDef="precio">
+      <th mat-header-cell *matHeaderCellDef> Precio Unitario</th>
+      <td mat-cell *matCellDef="let element">{{element.precioUnitario}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="quantity">
-      <th mat-header-cell *matHeaderCellDef>Horas</th>
-      <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
+    <ng-container matColumnDef="cantidad">
+      <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+      <td mat-cell *matCellDef="let element">{{element.cantidad}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef>Fecha de reserva</th>
-      <td mat-cell *matCellDef="let element">{{element.date}}</td>
+    <ng-container matColumnDef="subtotal">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let element">{{element.subtotal}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef> Total</th>
-      <td mat-cell *matCellDef="let element">{{element.total}}</td>
-    </ng-container>
+<!--    <ng-container matColumnDef="total">-->
+<!--      <th mat-header-cell *matHeaderCellDef> Total</th>-->
+<!--      <td mat-cell *matCellDef="let element">{{element.total}}</td>-->
+<!--    </ng-container>-->
 
     <ng-container matColumnDef="edit">
       <th mat-header-cell *matHeaderCellDef> Delete</th>

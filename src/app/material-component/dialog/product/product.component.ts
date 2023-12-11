@@ -2,19 +2,19 @@ import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../../../services/snackbar.service";
-import {CustomerService} from "../../../services/customer.service";
 import {GlobalConstants} from "../../../shared/global-constants";
+import {ProductService} from "../../../services/product.service";
 
 @Component({
-  selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css']
+  selector: 'app-product',
+  templateUrl: './product.component.html',
+  styleUrls: ['./product.component.css']
 })
-export class CustomerComponent implements OnInit{
+export class ProductComponent implements OnInit{
 
-  onAddCustomer = new EventEmitter();
-  onEditCustomer = new EventEmitter();
-  customerForm: any = FormGroup;
+  onAddProduct = new EventEmitter();
+  onEditProduct = new EventEmitter();
+  productForm: any = FormGroup;
   dialogAction: any = "Add";
   action: any = "Add";
 
@@ -22,22 +22,22 @@ export class CustomerComponent implements OnInit{
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any,
               private formBuilder: FormBuilder,
-              private customerService: CustomerService,
-              public dialogRef: MatDialogRef<CustomerComponent>,
+              private productService: ProductService,
+              public dialogRef: MatDialogRef<ProductComponent>,
               private snackbarService: SnackbarService) {
   }
 
   ngOnInit(): void {
-    this.customerForm = this.formBuilder.group({
+    this.productForm = this.formBuilder.group({
       nombre:[null, [Validators.required]],
-      direccion: [null, [Validators.required]],
-      telefono: [null, [Validators.required]],
-      correo: [null, [Validators.required]],
+      descripcion: [null, [Validators.required]],
+      precioUnitario: [null, [Validators.required]],
+      stock: [null, [Validators.required]],
     });
     if (this.dialogData.action === "Edit") {
       this.dialogAction = "Edit"
       this.action = "Update"
-      this.customerForm.patchValue(this.dialogData.data);
+      this.productForm.patchValue(this.dialogData.data);
     }
   }
 
@@ -50,18 +50,17 @@ export class CustomerComponent implements OnInit{
   }
 
   add() {
-    var formData = this.customerForm.value;
+    var formData = this.productForm.value;
     var data = {
       nombre: formData.nombre,
-      direccion: formData.direccion,
-      telefono: formData.telefono,
-      correo: formData.correo,
-      fechaCreacion: new Date()
+      descripcion: formData.descripcion,
+      precioUnitario: formData.precioUnitario,
+      stock: formData.stock,
     }
 
-    this.customerService.add(data).subscribe((response: any) => {
+    this.productService.add(data).subscribe((response: any) => {
       this.dialogRef.close();
-      this.onAddCustomer.emit();
+      this.onAddProduct.emit();
       this.responseMessage = response.message;
       this.snackbarService.openSnackBar(this.responseMessage, "success");
     }, (error) => {
@@ -77,20 +76,18 @@ export class CustomerComponent implements OnInit{
   }
 
   edit() {
-    var formData = this.customerForm.value;
+    var formData = this.productForm.value;
     var data = {
-      idCliente:this.dialogData.data.idCliente,
+      idProducto:this.dialogData.data.idProducto,
       nombre: formData.nombre,
-      direccion: formData.direccion,
-      telefono: formData.telefono,
-      correo: formData.correo,
-      fechaCreacion: this.dialogData.data.fechaCreacion,
-      fechaActualizacion: new Date()
+      descripcion: formData.descripcion,
+      precioUnitario: formData.precioUnitario,
+      stock: formData.stock
     }
 
-    this.customerService.update(data).subscribe((response: any) => {
+    this.productService.update(data).subscribe((response: any) => {
       this.dialogRef.close();
-      this.onEditCustomer.emit();
+      this.onEditProduct.emit();
       this.responseMessage = response.message;
       this.snackbarService.openSnackBar(this.responseMessage, "success");
     }, (error) => {
