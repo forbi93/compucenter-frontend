@@ -1,47 +1,51 @@
 import {Component, OnInit} from '@angular/core';
-import {ReservationService} from "../../services/reservation.service";
+import {CustomerService} from "../../services/customer.service";
 import {NgxUiLoaderService} from "ngx-ui-loader";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {SnackbarService} from "../../services/snackbar.service";
 import {Router} from "@angular/router";
 import {MatTableDataSource} from "@angular/material/table";
 import {GlobalConstants} from "../../shared/global-constants";
-import {ViewReservationRoomsComponent} from "../dialog/view-reservation-rooms/view-reservation-rooms.component";
+import {CategoryComponent} from "../dialog/category/category.component";
+import {CustomerComponent} from "../dialog/customer/customer.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
-import {saveAs} from "file-saver";
+import {DateService} from "../../services/date.service";
 
 @Component({
-  selector: 'app-view-reservation',
-  templateUrl: './view-reservation.component.html',
-  styleUrls: ['./view-reservation.component.css']
+  selector: 'app-manage-customer',
+  templateUrl: './manage-customer.component.html',
+  styleUrls: ['./manage-customer.component.css']
 })
-export class ViewReservationComponent implements OnInit{
+export class ManageCustomerComponent implements OnInit{
 
-  displayedColumns: string[] = ['name','email','contactNumber','dateCreated','paymentMethod','total','view'];
-  dataSource: any;
+  displayedColumns: string[] = ['nombre','direccion','telefono','correo','fechaCreacion','fechaActualizacion', 'edit'];
+  dataSource:any;
   responseMessage:any;
 
-  constructor(private reservationService:ReservationService,
-              private ngxService: NgxUiLoaderService,
-              private dialog: MatDialog,
+  dateService: DateService;
+
+  constructor(private customerService:CustomerService,
+              private ngxService:NgxUiLoaderService,
+              private dialog:MatDialog,
               private snackbarService:SnackbarService,
-              private router: Router) {
+              private router:Router,
+              private _dateService: DateService) {
+    this.dateService = this._dateService;
   }
 
   ngOnInit(): void {
     this.ngxService.start();
     this.tableData();
+
   }
 
-
-
   tableData(){
-    this.reservationService.getReservations().subscribe((response:any)=>{
+    this.customerService.getCustomers().subscribe((response:any)=>{
       this.ngxService.stop();
       this.dataSource = new MatTableDataSource(response);
     },(error:any)=>{
       this.ngxService.stop();
-      console.log(error);
+      console.log(error.error?.message);
       if (error.error?.message){
         this.responseMessage = error.error?.message;
       }else{
@@ -56,34 +60,52 @@ export class ViewReservationComponent implements OnInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  handleViewAction(values:any){
+  handleAddAction(){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      data:values
+      action: 'Add'
     }
-    dialogConfig.width = "100%";
-    const dialogRef = this.dialog.open(ViewReservationRoomsComponent, dialogConfig);
+    dialogConfig.width = "850px";
+    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
     this.router.events.subscribe(()=>{
       dialogRef.close();
+    });
+    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+      this.tableData();
     })
   }
 
+  handleEditAction(values:any){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      action: 'Edit',
+      data:values
+    }
+    dialogConfig.width = "850px";
+    const dialogRef = this.dialog.open(CustomerComponent,dialogConfig);
+    this.router.events.subscribe(()=>{
+      dialogRef.close();
+    });
+    const sub = dialogRef.componentInstance.onEditCustomer.subscribe((response)=>{
+      this.tableData();
+    })
+  }
   handleDeleteAction(values:any){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message:'delete '+values.name + ' bill',
+      message:'eliminar' + values.nombre+' customer',
       confirmation:true
-    };
+    }
     const dialogRef = this.dialog.open(ConfirmationComponent,dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response)=>{
       this.ngxService.start();
-      this.deleteReservation(values.id);
+      this.deleteCustomer(values.idCliente);
       dialogRef.close();
     })
   }
 
-  deleteReservation(id:any){
-    this.reservationService.delete(id).subscribe((response:any)=>{
+  deleteCustomer(id:any){
+    this.customerService.delete(id).subscribe((response:any)=>{
       this.ngxService.stop();
       this.tableData();
       this.responseMessage = response?.message;
@@ -97,28 +119,6 @@ export class ViewReservationComponent implements OnInit{
         this.responseMessage = GlobalConstants.genericError;
       }
       this.snackbarService.openSnackBar(this.responseMessage,GlobalConstants.error);
-    })
-  }
-
-  downloadReportAction(values:any){
-    this.ngxService.start();
-    var data = {
-      name: values.name,
-      email:values.email,
-      uuid:values.uuid,
-      contactNumber:values.contactNumber,
-      paymentMethod:values.paymentMethod,
-      date:values.date,
-      totalAmount: values.total.toString(),
-      roomDetails: values.roomDetail
-    }
-    this.downloadFile(values.uuid,data);
-  }
-
-  downloadFile(fileName:string,data:any){
-    this.reservationService.getPdf(data).subscribe((response)=>{
-      saveAs(response,fileName+'.pdf');
-      this.ngxService.stop();
     })
   }
 
