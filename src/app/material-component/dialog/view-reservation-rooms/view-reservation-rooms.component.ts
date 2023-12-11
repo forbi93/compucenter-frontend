@@ -1,9 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {ViewReservationComponent} from "../../view-reservation/view-reservation.component";
 
 @Component({
-  selector: 'app-view-reservation-rooms',
+  selector: 'app-view-sales-rooms',
   templateUrl: './view-reservation-rooms.component.html',
   styleUrls: ['./view-reservation-rooms.component.css']
 })

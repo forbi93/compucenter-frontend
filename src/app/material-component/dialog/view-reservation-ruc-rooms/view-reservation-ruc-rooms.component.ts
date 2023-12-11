@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-view-reservation-ruc-rooms',
+  selector: 'app-view-sales-ruc-rooms',
   templateUrl: './view-reservation-ruc-rooms.component.html',
   styleUrls: ['./view-reservation-ruc-rooms.component.css']
 })

@@ -9,6 +9,7 @@ import {GlobalConstants} from "../../shared/global-constants";
 import {CategoryComponent} from "../dialog/category/category.component";
 import {CustomerComponent} from "../dialog/customer/customer.component";
 import {ConfirmationComponent} from "../dialog/confirmation/confirmation.component";
+import {DateService} from "../../services/date.service";
 
 @Component({
   selector: 'app-manage-customer',
@@ -17,20 +18,25 @@ import {ConfirmationComponent} from "../dialog/confirmation/confirmation.compone
 })
 export class ManageCustomerComponent implements OnInit{
 
-  displayedColumns: string[] = ['name','lastName','contactNumber','dni','doc','edit'];
+  displayedColumns: string[] = ['idCliente','nombre','direccion','telefono','correo','fechaCreacion','fechaActualizacion', 'edit'];
   dataSource:any;
   responseMessage:any;
+
+  dateService: DateService;
 
   constructor(private customerService:CustomerService,
               private ngxService:NgxUiLoaderService,
               private dialog:MatDialog,
               private snackbarService:SnackbarService,
-              private router:Router) {
+              private router:Router,
+              private _dateService: DateService) {
+    this.dateService = this._dateService;
   }
 
   ngOnInit(): void {
     this.ngxService.start();
     this.tableData();
+
   }
 
   tableData(){
@@ -80,20 +86,20 @@ export class ManageCustomerComponent implements OnInit{
     this.router.events.subscribe(()=>{
       dialogRef.close();
     });
-    const sub = dialogRef.componentInstance.onAddCustomer.subscribe((response)=>{
+    const sub = dialogRef.componentInstance.onEditCustomer.subscribe((response)=>{
       this.tableData();
     })
   }
   handleDeleteAction(values:any){
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      message:'delete' + values.name+' customer',
+      message:'eliminar' + values.nombre+' customer',
       confirmation:true
     }
     const dialogRef = this.dialog.open(ConfirmationComponent,dialogConfig);
     const sub = dialogRef.componentInstance.onEmitStatusChange.subscribe((response)=>{
       this.ngxService.start();
-      this.deleteCustomer(values.id);
+      this.deleteCustomer(values.idCliente);
       dialogRef.close();
     })
   }

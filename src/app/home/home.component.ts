@@ -16,11 +16,11 @@ export class HomeComponent implements OnInit {
               private router:Router) { }
 
   ngOnInit(): void {
-    this.userServices.checkToken().subscribe((response:any)=>{
-      this.router.navigate(['hotel/dashboard']);
-    },(error:any)=>{
-      console.log(error);
-    })
+    // this.userServices.checkToken().subscribe((response:any)=>{
+    //   this.router.navigate(['hotel/dashboard']);
+    // },(error:any)=>{
+    //   console.log(error);
+    // })
   }
 
   handleSignupAction(){

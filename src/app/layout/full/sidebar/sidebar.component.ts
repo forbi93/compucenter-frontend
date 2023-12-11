@@ -10,7 +10,7 @@ import jwt_decode from "jwt-decode";
 export class SidebarComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   userRole:any;
-  token:any = localStorage.getItem('token');
+  // token:any = localStorage.getItem('token');
   tokenPayLoad:any;
 
   private _mobileQueryListener: () => void;
@@ -20,7 +20,7 @@ export class SidebarComponent implements OnDestroy {
     media: MediaMatcher,
     public menuItems:MenuItems
   ) {
-    this.tokenPayLoad = jwt_decode(this.token);
+    // this.tokenPayLoad = jwt_decode(this.token);
     this.userRole = this.tokenPayLoad?.role;
     this.mobileQuery = media.matchMedia('(min-width: 768px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();

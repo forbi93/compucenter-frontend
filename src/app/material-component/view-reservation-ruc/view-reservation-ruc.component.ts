@@ -14,7 +14,7 @@ import {
 } from "../dialog/view-reservation-ruc-rooms/view-reservation-ruc-rooms.component";
 
 @Component({
-  selector: 'app-view-reservation-ruc',
+  selector: 'app-view-sales-ruc',
   templateUrl: './view-reservation-ruc.component.html',
   styleUrls: ['./view-reservation-ruc.component.css']
 })

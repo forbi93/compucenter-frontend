@@ -29,11 +29,10 @@ export class CustomerComponent implements OnInit{
 
   ngOnInit(): void {
     this.customerForm = this.formBuilder.group({
-      name:[null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      contactNumber: [null, [Validators.required]],
-      dni: [null, [Validators.required]],
-      doc: [null, [Validators.required]]
+      nombre:[null, [Validators.required]],
+      direccion: [null, [Validators.required]],
+      telefono: [null, [Validators.required]],
+      correo: [null, [Validators.required]],
     });
     if (this.dialogData.action === "Edit") {
       this.dialogAction = "Edit"
@@ -53,11 +52,11 @@ export class CustomerComponent implements OnInit{
   add() {
     var formData = this.customerForm.value;
     var data = {
-      name: formData.name,
-      lastName: formData.lastName,
-      contactNumber: formData.contactNumber,
-      dni: formData.dni,
-      doc: formData.doc
+      nombre: formData.nombre,
+      direccion: formData.direccion,
+      telefono: formData.telefono,
+      correo: formData.correo,
+      fechaCreacion: new Date()
     }
 
     this.customerService.add(data).subscribe((response: any) => {
@@ -80,17 +79,18 @@ export class CustomerComponent implements OnInit{
   edit() {
     var formData = this.customerForm.value;
     var data = {
-      id:this.dialogData.data.id,
-      name: formData.name,
-      lastName: formData.lastName,
-      contactNumber: formData.contactNumber,
-      dni: formData.dni,
-      doc: formData.doc
+      idCliente:this.dialogData.data.idCliente,
+      nombre: formData.nombre,
+      direccion: formData.direccion,
+      telefono: formData.telefono,
+      correo: formData.correo,
+      fechaCreacion: this.dialogData.data.fechaCreacion,
+      fechaActualizacion: new Date()
     }
 
     this.customerService.update(data).subscribe((response: any) => {
       this.dialogRef.close();
-      this.onAddCustomer.emit();
+      this.onEditCustomer.emit();
       this.responseMessage = response.message;
       this.snackbarService.openSnackBar(this.responseMessage, "success");
     }, (error) => {

@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row fxLayout="row">
-    <span>{{dialogData.action}} Customer</span>
+    <span>{{dialogData.action}} Cliente</span>
     <span class="spacer"></span>
     <button class="class-dialog-close" mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
@@ -12,52 +12,52 @@
   <form [formGroup]="customerForm">
     <div fxFlex fxLayout="column">
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name" required>
-        <mat-error *ngIf="customerForm.controls.name.touched && customerForm.controls.name.invalid">
-          <span *ngIf="customerForm.controls.name.errors.required">This field is mandatory.</span>
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre" required>
+        <mat-error *ngIf="customerForm.controls.nombre.touched && customerForm.controls.nombre.invalid">
+          <span *ngIf="customerForm.controls.nombre.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Last Name</mat-label>
-        <input matInput formControlName="lastName" required>
-        <mat-error *ngIf="customerForm.controls.lastName.touched && customerForm.controls.lastName.invalid">
-          <span *ngIf="customerForm.controls.lastName.errors.required">This field is mandatory.</span>
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="direccion" required>
+        <mat-error *ngIf="customerForm.controls.direccion.touched && customerForm.controls.direccion.invalid">
+          <span *ngIf="customerForm.controls.direccion.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Contact Number</mat-label>
-        <input matInput formControlName="contactNumber" required>
-        <mat-error *ngIf="customerForm.controls.contactNumber.touched && customerForm.controls.contactNumber.invalid">
-          <span *ngIf="customerForm.controls.contactNumber.errors.required">This field is mandatory.</span>
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="telefono" required>
+        <mat-error *ngIf="customerForm.controls.telefono.touched && customerForm.controls.telefono.invalid">
+          <span *ngIf="customerForm.controls.telefono.errors.required">Este campo es obligatorio.</span>
 
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Nro. Documento</mat-label>
-        <input matInput formControlName="dni" required>
-        <mat-error *ngIf="customerForm.controls.dni.touched && customerForm.controls.dni.invalid">
-          <span *ngIf="customerForm.controls.dni.errors.required">This field is mandatory.</span>
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput formControlName="correo" required>
+        <mat-error *ngIf="customerForm.controls.correo.touched && customerForm.controls.correo.invalid">
+          <span *ngIf="customerForm.controls.correo.errors.required">Este campo es obligatorio.</span>
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" fxFlex>
-        <mat-label>Tipo de Documento</mat-label>
-        <mat-select formControlName="doc" required>
-          <mat-option value="DNI">DNI</mat-option>
-          <mat-option value="Carnet de Extranjeria">Carnet de Extranjeria</mat-option>
-          <mat-option value="Pasaporte">Pasaporte</mat-option>
-        </mat-select>
-        <mat-error *ngIf="customerForm.controls.doc.touched && customerForm.controls.doc.invalid">
-          <span *ngIf="customerForm.controls.doc.errors.required">This field is mandatory</span>
-          <span *ngIf="customerForm.controls.doc.errors.pattern">This field is invalid.</span>
-        </mat-error>
-      </mat-form-field>
+<!--      <mat-form-field appearance="fill" fxFlex>-->
+<!--        <mat-label>Tipo de Documento</mat-label>-->
+<!--        <mat-select formControlName="doc" required>-->
+<!--          <mat-option value="DNI">DNI</mat-option>-->
+<!--          <mat-option value="Carnet de Extranjeria">Carnet de Extranjeria</mat-option>-->
+<!--          <mat-option value="Pasaporte">Pasaporte</mat-option>-->
+<!--        </mat-select>-->
+<!--        <mat-error *ngIf="customerForm.controls.doc.touched && customerForm.controls.doc.invalid">-->
+<!--          <span *ngIf="customerForm.controls.doc.errors.required">This field is mandatory</span>-->
+<!--          <span *ngIf="customerForm.controls.doc.errors.pattern">This field is invalid.</span>-->
+<!--        </mat-error>-->
+<!--      </mat-form-field>-->
     </div>
   </form>
 </mat-dialog-content>
